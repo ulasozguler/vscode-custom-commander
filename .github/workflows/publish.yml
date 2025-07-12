@@ -1,0 +1,55 @@
+name: Publish Extension
+
+on:
+  push:
+    tags:
+      - "v*" # Triggers on version tags like v1.0.0, v1.2.3, etc.
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install vsce (Visual Studio Code Extension CLI)
+        run: npm install -g @vscode/vsce
+
+      - name: Install dependencies
+        run: |
+          cd custom-commander
+          npm install
+
+      - name: Update version in package.json
+        run: |
+          cd custom-commander
+          # Extract version from git tag (remove 'v' prefix)
+          VERSION=${GITHUB_REF#refs/tags/v}
+          # Update package.json version
+          npm version $VERSION --no-git-tag-version
+
+      - name: Package extension
+        run: |
+          cd custom-commander
+          vsce package
+
+      - name: Publish to Visual Studio Marketplace
+        run: |
+          cd custom-commander
+          vsce publish -p ${{ secrets.VSCE_PAT }}
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: custom-commander/*.vsix
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

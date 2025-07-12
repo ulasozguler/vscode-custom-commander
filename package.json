@@ -1,0 +1,54 @@
+{
+  "name": "custom-commander",
+  "displayName": "Custom Commander",
+  "description": "Execute custom JavaScript functions as commands.",
+  "version": "0.0.1",
+  "publisher": "ulasozguler",
+  "license": "GNU GPLv3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ulasozguler/vscode-custom-commander.git"
+  },
+  "keywords": [
+    "javascript",
+    "command",
+    "custom",
+    "automation"
+  ],
+  "icon": "icon.png",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "custom-commander.processText",
+        "title": "Process Selected Text"
+      },
+      {
+        "command": "custom-commander.createCommandsFile",
+        "title": "Create Commands File"
+      },
+      {
+        "command": "custom-commander.reloadCommands",
+        "title": "Reload Commands"
+      },
+      {
+        "command": "custom-commander.pickCustomCommand",
+        "title": "Run Custom Command"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "custom-commander.pickCustomCommand",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r"
+      }
+    ]
+  }
+}
