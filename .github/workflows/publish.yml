@@ -5,6 +5,10 @@ on:
     tags:
       - "v*" # Triggers on version tags like v1.0.0, v1.2.3, etc.
 
+permissions:
+  contents: write
+  releases: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -22,13 +26,10 @@ jobs:
         run: npm install -g @vscode/vsce
 
       - name: Install dependencies
-        run: |
-          cd custom-commander
-          npm install
+        run: npm install
 
       - name: Update version in package.json
         run: |
-          cd custom-commander
           # Extract version from git tag (remove 'v' prefix)
           VERSION=${GITHUB_REF#refs/tags/v}
           # Update package.json version
@@ -36,12 +37,10 @@ jobs:
 
       - name: Package extension
         run: |
-          cd custom-commander
           vsce package
 
       - name: Publish to Visual Studio Marketplace
         run: |
-          cd custom-commander
           vsce publish -p ${{ secrets.VSCE_PAT }}
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
@@ -49,7 +48,7 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: custom-commander/*.vsix
+          files: "*.vsix"
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
